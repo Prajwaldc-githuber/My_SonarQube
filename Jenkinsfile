@@ -8,7 +8,7 @@ pipeline {
       steps {
         sh 'mvn -B clean install'
       }
-      // JUnit step removed because no tests exist
+      // JUnit reporting removed since no tests exist
     }
     stage('Run Sample') {
       steps {
