@@ -8,9 +8,7 @@ pipeline {
       steps {
         sh 'mvn -B clean install'
       }
-      post {
-        always { junit 'target/surefire-reports/*.xml' }
-      }
+      // JUnit step removed because no tests exist
     }
     stage('Run Sample') {
       steps {
