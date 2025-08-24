@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     tools {
-        // Make sure these tools are configured in Jenkins -> Global Tool Configuration
-        maven 'Maven3'     // your Maven installation name
-        jdk 'JDK21'        // your JDK installation name
-    }
+    maven 'M3'     // use the exact name of your Maven installation in Jenkins
+    jdk 'JDK21'    // use the exact name of your JDK installation
+}
 
     environment {
         SONARQUBE_TOKEN = credentials('sonar-token-id')  // Secret Text in Jenkins credentials
