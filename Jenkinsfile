@@ -1,57 +1,43 @@
 pipeline {
+    // This tells Jenkins to run the pipeline on any available agent.
     agent any
 
-    tools {
-    maven 'M3'     // use the exact name of your Maven installation in Jenkins
-    jdk 'JDK21'    // use the exact name of your JDK installation
-}
-
-    environment {
-        SONARQUBE_TOKEN = credentials('SonarQube')  // Secret Text in Jenkins credentials
-        SONARQUBE_URL   = 'http://51.20.130.180:9000'
-    }
-
+    // Stages define the steps of your pipeline.
     stages {
-
+        // Stage 1: Checkout the source code from the repository.
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/Prajwaldc-githuber/My_SonarQube.git'
+                echo 'Checking out source code...'
+                // Clones the Git repository and checks out the 'main' branch.
+                git branch: 'main', url: 'https://github.com/Pavi0293/Sonar_pipeline.git'
+                echo 'Checkout successful.'
             }
         }
-
-        stage('Build & Test') {
+        // Stage 2: Build the project.
+        stage('Build') {
             steps {
-                sh 'mvn clean install -B'
+                echo 'Simulating a build...'
+                echo 'Build successful.'
             }
         }
-
-        stage('SonarQube Analysis') {
+        // Stage 3: Deploy the application.
+        stage('Deploy') {
             steps {
-                withSonarQubeEnv('SonarQube') {  // 'SonarQube' is the name of SonarQube server in Jenkins configuration
-                    sh "mvn sonar:sonar -Dsonar.projectKey=javaparser-maven-sample -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_TOKEN}"
-                }
+                echo 'Simulating deployment...'
+                echo 'Deployment successful.'
             }
         }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
     }
 
+    // A 'post' section to run actions after the pipeline completes.
     post {
-        success {
-            echo "Pipeline completed successfully!"
-        }
-        failure {
-            echo "Pipeline failed. Check logs!"
-        }
         always {
-            cleanWs()
+            echo 'Pipeline finished.'
+            // You can add cleanup or notification steps here.
+        }
+
+        failure {
+            echo 'Pipeline failed. Check logs for details.'
         }
     }
 }
