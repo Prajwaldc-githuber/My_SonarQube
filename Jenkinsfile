@@ -1,43 +1,57 @@
 pipeline {
-    // This tells Jenkins to run the pipeline on any available agent.
     agent any
 
-    // Stages define the steps of your pipeline.
-    stages {
-        // Stage 1: Checkout the source code from the repository.
-        stage('Checkout') {
-            steps {
-                echo 'Checking out source code...'
-                // Clones the Git repository and checks out the 'main' branch.
-                git branch: 'main', url: 'https://github.com/Pavi0293/Sonar_pipeline.git'
-                echo 'Checkout successful.'
-            }
-        }
-        // Stage 2: Build the project.
-        stage('Build') {
-            steps {
-                echo 'Simulating a build...'
-                echo 'Build successful.'
-            }
-        }
-        // Stage 3: Deploy the application.
-        stage('Deploy') {
-            steps {
-                echo 'Simulating deployment...'
-                echo 'Deployment successful.'
-            }
-        }
+    tools {
+    maven '3.6.3'     // use the exact name of your Maven installation in Jenkins
+    jdk '17.0.16'    // use the exact name of your JDK installation
+}
+
+    environment {
+        SONARQUBE_TOKEN = credentials('SonarQube')  // Secret Text in Jenkins credentials
+        SONARQUBE_URL   = 'http://51.20.130.180:9000'
     }
 
-    // A 'post' section to run actions after the pipeline completes.
-    post {
-        always {
-            echo 'Pipeline finished.'
-            // You can add cleanup or notification steps here.
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/Prajwaldc-githuber/My_SonarQube.git'
+            }
         }
 
+        stage('Build & Test') {
+            steps {
+                sh 'mvn clean install -B'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {  // 'SonarQube' is the name of SonarQube server in Jenkins configuration
+                    sh "mvn sonar:sonar -Dsonar.projectKey=javaparser-maven-sample -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${SONARQUBE_TOKEN}"
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
         failure {
-            echo 'Pipeline failed. Check logs for details.'
+            echo "Pipeline failed. Check logs!"
+        }
+        always {
+            cleanWs()
         }
     }
 }
