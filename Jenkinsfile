@@ -7,15 +7,15 @@ pipeline {
 }
 
     environment {
-        SONARQUBE_TOKEN = credentials('sonar-token-id')  // Secret Text in Jenkins credentials
-        SONARQUBE_URL   = 'http://localhost:9000'
+        SONARQUBE_TOKEN = credentials('SonarQube')  // Secret Text in Jenkins credentials
+        SONARQUBE_URL   = 'http://51.20.130.180:9000'
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/jayanthis952/javaparser-maven-sample.git'
+                git branch: 'master', url: 'https://github.com/Prajwaldc-githuber/My_SonarQube.git'
             }
         }
 
