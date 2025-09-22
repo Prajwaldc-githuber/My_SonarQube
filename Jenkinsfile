@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         SONARQUBE_TOKEN = credentials('SonarQube')  // Secret Text in Jenkins credentials
-        SONARQUBE_URL   = 'http://51.20.130.180:9000'
+        SONARQUBE_URL   = 'http://13.53.119.232:9000'
     }
 
     stages {
